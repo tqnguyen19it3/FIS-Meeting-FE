@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 
 const MeetingBookingForm = () => {
+  const [form, setForm] = useState({
+    name: '',
+    startDate: '',
+
+  })
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-overlay-gray10040 flex justify-center items-center">
       <div className="bg-white-white100 rounded-[10px] w-full max-w-1000 max-h-full">
