@@ -1,15 +1,17 @@
 import "./App.css";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import Schedule from "./components/Schedule/Schedule";
-// import MeetingBookingForm from "./components/Form/MeetingBooking/MeetingBookingForm.JS";
+import Calendar from "./pages/CalendarView/components/Calendar/Calendar";
+import Sidebar from "./pages/CalendarView/components/SideBar/SideBar";
 
 function App() {
   return (
     <div className="App">
       <ToastContainer />
-      <Schedule />
-      {/* <MeetingBookingForm /> */}
+      <div className="flex min-h-screen">
+        <Sidebar />
+        <Calendar />
+      </div>
     </div>
   );
 }

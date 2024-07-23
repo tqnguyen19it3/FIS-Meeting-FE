@@ -10,10 +10,14 @@ module.exports = {
         'button-color': '#F7C245',
         'time-col-color': '#FFF5D0',
         meeting: {
-          scheduled: '#FF934B',  // orange-500
-          ongoing: '#4299e1',    // blue-500
-          completed: '#48bb78',  // green-500
-          cancelled: '#f56565',  // red-500
+          scheduled: '#FF934B',
+          ongoing: '#4299e1',
+          completed: '#00C48C',
+          cancelled: '#f56565',
+          scheduledBg: '#FFF1E9',
+          ongoingBg: '#e2f8fd',
+          completedBg: '#D9F6EE',
+          cancelledBg: '#ffe7e7',
         },
       },
     }

@@ -1,0 +1,10 @@
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
+.test .react-datepicker-wrapper{  
+  width: 100%;
+  text-align: start;
+}
