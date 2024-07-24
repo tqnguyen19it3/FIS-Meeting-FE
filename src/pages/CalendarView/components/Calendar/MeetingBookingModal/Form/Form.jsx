@@ -5,12 +5,13 @@ import SelectField from "./SelectField";
 import DateTimePicker from "./DateTimePicker";
 import "./style.css";
 import MultiSelectDropdown from "./MultiSelectDropdown";
+import moment from "moment-timezone";
 
 const Form = ({
   meetingRooms,
   participants,
   addForm,
-  handleChangeFormField,
+  handleChangeFormField
 }) => {
   const durationOptions = [
     { value: "1", label: "1 tiếng" },
@@ -71,6 +72,19 @@ const Form = ({
     };
   });
 
+  // const handleDateChange = (date) => {
+  //   const selectedDate = moment(date).tz("Asia/Ho_Chi_Minh");
+  //   const currentDate = moment(new Date()).tz("Asia/Ho_Chi_Minh");
+  //   if (selectedDate.isSameOrAfter(currentDate, "day")) {
+  //     setStartDate(date)
+  //   } else {
+  //     toast.error(
+  //       `Error Validate: You cannot set a date to fall on a date in the past`
+  //     );
+  //     setStartDate("")
+  //   }
+  // };
+
   return (
     <div className="grid grid-cols-3 gap-[20px] p-5 text-start">
       <TextInput
@@ -98,7 +112,8 @@ const Form = ({
         label="Ngày họp"
         name={"dateStart"}
         value={addForm.dateStart}
-        action={handleChangeFormField} />
+        action={handleChangeFormField} 
+      />
       <SelectField
         label="Thời gian bắt đầu"
         name={"timeStart"}

@@ -15,13 +15,34 @@ const Calendar = () => {
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Hàm tính toán ngày đầu tuần và ngày cuối tuần
+  const getStartAndEndOfWeek = (date) => {
+    const start = new Date(date);
+    const end = new Date(date);
+    
+    // Xác định ngày đầu tuần (Thứ Hai)
+    const dayOfWeek = start.getDay();
+    const differenceToMonday = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
+    start.setDate(start.getDate() + differenceToMonday);
+    start.setHours(0, 0, 0, 0);
+    
+    // Xác định ngày cuối tuần (Chủ nhật)
+    end.setDate(start.getDate() + 6);
+    end.setHours(23, 59, 59, 999);
+    
+    return { startDate: start.toISOString(), endDate: end.toISOString() };
+};
+
 
   useEffect(() => {
     const fetchMeetings = async () => {
+      const { startDate, endDate } = getStartAndEndOfWeek(currentTime);
       try {
-        const response = await axios.get(
-          "http://localhost:3030/api/v1/meeting/get-meeting-list"
-        );
+        const response = await axios.get('http://localhost:3030/api/v1/meeting/get-meeting-list-by-week', {
+          params: { startDate, endDate }
+        });
         if (response.data.error) {
           toast.error(`Error: ${response.data.error + " " + response.data.message}`);
         } else {
@@ -35,7 +56,7 @@ const Calendar = () => {
       }
     };
     fetchMeetings();
-  }, []);
+  }, [currentTime]);
 
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
@@ -46,8 +67,8 @@ const Calendar = () => {
         <div className="w-[200px] my-4">
           <DateTimePicker
             name={"dateStart"}
-            value={new Date()}
-            action={() => {}}
+            value={currentTime}
+            action={(e) => setCurrentTime(e.target.value)}
           />
         </div>
         <div className="flex items-center justify-center rounded-full w-11 h-11 border-2">
