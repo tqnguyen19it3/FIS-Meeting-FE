@@ -3,7 +3,7 @@ import React from "react";
 const TextareaInput = ({label, name, value, action}) => {
   return (
     <div>
-      <span className="font-regular font-sans text-sm block mb-4 text-[#343434]">
+      <span className="font-regular font-sans text-sm block text-[#343434]">
         {label}
       </span>
       <div className="border-[1px] flex items-center rounded-[10px] px-3 py-2">

@@ -35,6 +35,17 @@ const MeetingCard = ({ meetings }) => {
     }
   };
 
+  function translateMeetingStatus(status) {
+    const statusMap = {
+      'scheduled': 'Đã lên lịch',
+      'ongoing': 'Đang diễn ra',
+      'completed': 'Đã hoàn thành',
+      'cancelled': 'Đã hủy'
+    };
+
+    return statusMap[status] || 'Trạng thái chưa xác định';
+}
+
   const renderMeetingsForDay = (day) => {
     const filteredMeetings = meetings.filter((meeting) => {
       const meetingDay = moment(meeting.startTime)
@@ -108,7 +119,7 @@ const MeetingCard = ({ meetings }) => {
           <div
             className={`${
               getColorClasses(meeting.status).rBgClass
-            } w-full text-start p-3 overflow-y-auto font-sans text-sm`}
+            } w-full text-start p-3 overflow-y-auto font-sans text-sm card`}
           >
             <div className={"font-semibold text-base"}>{meeting.meetingName}</div>
             <div>{meeting.department}</div>
@@ -116,7 +127,7 @@ const MeetingCard = ({ meetings }) => {
             <div>{meeting.date}</div>
             <div className={`font-medium ${
               getColorClasses(meeting.status).textClass
-            }`}>{meeting.status}</div>
+            }`}>{translateMeetingStatus(meeting.status)}</div>
           </div>
         </div>
       );

@@ -4,7 +4,29 @@ select:focus {
   outline: none;
 }
 
-.test .react-datepicker-wrapper{  
+.datePicker .react-datepicker-wrapper{  
   width: 100%;
   text-align: start;
 }
+
+.field-select:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+}
+
+.card::-webkit-scrollbar-track
+{
+    border-radius: 10px;
+    background-color: transparent;
+}
+
+.card::-webkit-scrollbar
+{
+    width: 6px;
+    /* background-color: #F5F5F5; */
+}
+.card::-webkit-scrollbar-thumb
+    {
+        border-radius: 10px;
+        background-color: rgb(195, 195, 195);
+    }

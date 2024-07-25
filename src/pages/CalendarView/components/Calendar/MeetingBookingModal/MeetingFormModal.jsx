@@ -5,94 +5,30 @@ import moment from "moment-timezone";
 import HeaderModal from "./HeaderModal";
 import BottomControl from "./BottomControl";
 import Form from "./Form/Form";
+import { ClipLoader } from "react-spinners";
+import { getStartAndEndOfWeek } from "../utils";
 
-const MeetingFormModal = ({ setLoading, setMeetings, handleCloseModal }) => {
+const MeetingFormModal = ({
+  setMeetings,
+  handleCloseModal,
+  setDateSelect,
+  dateSelect,
+}) => {
   const [meetingRooms, setMeetingRooms] = useState([]);
   const [participants, setParticipants] = useState([]);
+  const [availableMeetingTimes, setAvailableMeetingTimes] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [addForm, setAddForm] = useState({
     meetingName: "",
-    department: "",
+    department: "R&D",
     description: "",
     dateStart: "",
     timeStart: "",
     duration: "",
     participants: [],
-    status: "",
+    status: "scheduled",
     room: "",
   });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    // Tạo đối tượng kết quả với các trường cần thiết
-    const transformMeetingData = {
-      meetingName: addForm.meetingName,
-      description: addForm.description,
-      department: addForm.department,
-      startTime: moment(addForm.dateStart)
-        .hour(addForm.timeStart)
-        .toISOString(), // Chuyển đổi thành UTC ISO string
-      endTime: moment(addForm.dateStart)
-        .hour((+addForm.timeStart + +addForm.duration).toString())
-        .toISOString(), // Chuyển đổi thành UTC ISO string
-      status: addForm.status,
-      roomId: addForm.room,
-      // participantIDs: addForm.participants,
-      participantIDs: ["668f9671945ec809d8a89358", "668f9653945ec809d8a89354"],
-    };
-
-    try {
-      // Gọi API để tạo meeting
-      const response = await axios.post(
-        "http://localhost:3030/api/v1/meeting/create-meeting-with-participants",
-        transformMeetingData
-      );
-
-      if (response.data.error) {
-        toast.error(
-          `Error: ${response.data.error + " " + response.data.message}`
-        );
-      } else {
-        toast.success(`Success: ${response.data.message}`);
-        const meetingListData = await axios.get(
-          "http://localhost:3030/api/v1/meeting/get-meeting-list"
-        );
-
-        setMeetings(meetingListData.data.data);
-        // Reset form sau khi thành công
-        setAddForm({
-          meetingName: "",
-          department: "",
-          description: "",
-          dateStart: "",
-          timeStart: "",
-          duration: "",
-          participants: [],
-          status: "",
-          room: "",
-        });
-        // close form modal
-        handleCloseModal();
-      }
-    } catch (error) {
-      console.log("Error creating meeting: ", error);
-      toast.error(
-        "Error creating meeting: ",
-        error.response ? error.response.data : error.message
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleChangeFormField = (e) => {
-    const { name, value } = e.target;
-    setAddForm((prevForm) => ({
-      ...prevForm,
-      [name]: value,
-    }));
-  };
 
   useEffect(() => {
     const fetchMeetingRooms = async () => {
@@ -101,15 +37,12 @@ const MeetingFormModal = ({ setLoading, setMeetings, handleCloseModal }) => {
           "http://localhost:3030/api/v1/meeting-room/get-meeting-room-list"
         );
         if (response.data.error) {
-          toast.error(
-            `Error: ${response.data.error + " " + response.data.message}`
-          );
+          toast.error(`${response.data.message}`);
         } else {
-          // toast.success(`Success: ${response.data.message}`);
           setMeetingRooms(response.data.data);
         }
       } catch (error) {
-        toast.error(`Error: ${error}`);
+        toast.error("Hệ thống đã xảy ra lỗi, vui lòng thử lại sau");
       }
     };
     const fetchParticipants = async () => {
@@ -118,30 +51,147 @@ const MeetingFormModal = ({ setLoading, setMeetings, handleCloseModal }) => {
           "http://localhost:3030/api/v1/user/get-user-list"
         );
         if (response.data.error) {
-          toast.error(
-            `Error: ${response.data.error + " " + response.data.message}`
-          );
+          toast.error(`${response.data.message}`);
         } else {
-          // toast.success(`Success: ${response.data.message}`);
           setParticipants(response.data.data);
         }
       } catch (error) {
-        toast.error(`Error: ${error}`);
+        toast.error("Hệ thống đã xảy ra lỗi, vui lòng thử lại sau");
+      }
+    };
+    const fetchAvailableMeetingTimes = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3030/api/v1/meeting/get-available-meeting-times-during-day",
+          {
+            params: {
+              date:
+                moment(dateSelect).toDate() >= moment(new Date()).toDate()
+                  ? dateSelect
+                  : new Date(),
+            },
+          }
+        );
+        setAddForm((prevForm) => ({
+          ...prevForm,
+          dateStart:
+            moment(dateSelect).toDate() >= moment(new Date()).toDate()
+              ? dateSelect
+              : new Date(),
+        }));
+        setAvailableMeetingTimes(response.data.data);
+      } catch (error) {
+        toast.error("Hệ thống đã xảy ra lỗi, vui lòng thử lại sau");
       }
     };
     fetchMeetingRooms();
     fetchParticipants();
-  }, []);
+    fetchAvailableMeetingTimes();
+  }, [dateSelect]);
+
+  const handleChangeFormField = async (e) => {
+    const { name, value } = e.target;
+    if (name === "dateStart") {
+      try {
+        const response = await axios.get(
+          "http://localhost:3030/api/v1/meeting/get-available-meeting-times-during-day",
+          {
+            params: { date: value },
+          }
+        );
+        setAvailableMeetingTimes(response.data.data);
+      } catch (error) {
+        toast.error("Hệ thống đã xảy ra lỗi, vui lòng thử lại sau");
+      }
+    }
+    setAddForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    // Tạo đối tượng kết quả với các trường cần thiết
+    const transformMeetingData = {
+      meetingName: addForm.meetingName,
+      description: addForm.description,
+      department: addForm.department,
+      startTime: moment(addForm.dateStart)
+        .hour(addForm.timeStart)
+        .minute(0)
+        .second(0)
+        .millisecond(0)
+        .toISOString(), // Chuyển đổi thành UTC ISO string
+      endTime: moment(addForm.dateStart)
+        .hour((+addForm.timeStart + +addForm.duration).toString())
+        .minute(0)
+        .second(0)
+        .millisecond(0)
+        .toISOString(), // Chuyển đổi thành UTC ISO string
+      status: addForm.status,
+      roomId: addForm.room,
+      participantIDs: addForm.participants.map((item) => item.value),
+    };
+    try {
+      // Gọi API để tạo meeting
+      const response = await axios.post(
+        "http://localhost:3030/api/v1/meeting/create-meeting-with-participants",
+        transformMeetingData
+      );
+
+      if (response.data.error) {
+        toast.error(`${response.data.message}`);
+      } else {
+        toast.success(`${response.data.message}`);
+        const meetingListData = await axios.get(
+          "http://localhost:3030/api/v1/meeting/get-meeting-list-by-week",
+          {
+            params: getStartAndEndOfWeek(response.data.data.startTime),
+          }
+        );
+        setDateSelect(response.data.data.startTime);
+        setMeetings(meetingListData.data.data);
+        // Reset form sau khi thành công
+        setAddForm({
+          meetingName: "",
+          department: "R&D",
+          description: "",
+          dateStart: "",
+          timeStart: "",
+          duration: "",
+          participants: [],
+          status: "scheduled",
+          room: "",
+        });
+        // close form modal
+        handleCloseModal();
+      }
+    } catch (error) {
+      console.log("Lỗi tạo cuộc họp: ", error);
+      toast.error("Lỗi tạo cuộc họp, vui lòng thử lại sau");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-gray-500 bg-opacity-25 flex justify-center items-center">
+      {loading && (
+        <div className="flex fixed top-0 left-0 justify-center items-center h-screen w-screen">
+          <ClipLoader size={150} color={"blue"} loading={loading} />
+        </div>
+      )}
       <div className="bg-white rounded-[10px] w-full max-w-[1000px] max-h-full">
         <HeaderModal />
         <Form
           addForm={addForm}
+          setAddForm={setAddForm}
           meetingRooms={meetingRooms}
           participants={participants}
           handleChangeFormField={handleChangeFormField}
+          availableMeetingTimes={availableMeetingTimes}
         />
         <BottomControl
           handleCloseModal={handleCloseModal}

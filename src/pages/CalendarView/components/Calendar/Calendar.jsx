@@ -10,53 +10,36 @@ import Button from "../Button";
 import DateTimePicker from "./MeetingBookingModal/Form/DateTimePicker";
 import MenuIcon from "./menu_ic.svg";
 import "./MeetingBookingModal/Form/style.css";
+import { getStartAndEndOfWeek } from "./utils";
 
 const Calendar = () => {
   const [meetings, setMeetings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  // Hàm tính toán ngày đầu tuần và ngày cuối tuần
-  const getStartAndEndOfWeek = (date) => {
-    const start = new Date(date);
-    const end = new Date(date);
-    
-    // Xác định ngày đầu tuần (Thứ Hai)
-    const dayOfWeek = start.getDay();
-    const differenceToMonday = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
-    start.setDate(start.getDate() + differenceToMonday);
-    start.setHours(0, 0, 0, 0);
-    
-    // Xác định ngày cuối tuần (Chủ nhật)
-    end.setDate(start.getDate() + 6);
-    end.setHours(23, 59, 59, 999);
-    
-    return { startDate: start.toISOString(), endDate: end.toISOString() };
-};
-
+  const [dateSelect, setDateSelect] = useState(new Date());
 
   useEffect(() => {
     const fetchMeetings = async () => {
-      const { startDate, endDate } = getStartAndEndOfWeek(currentTime);
+      const { startDate, endDate } = getStartAndEndOfWeek(dateSelect);
       try {
+        setLoading(true)
         const response = await axios.get('http://localhost:3030/api/v1/meeting/get-meeting-list-by-week', {
           params: { startDate, endDate }
         });
         if (response.data.error) {
-          toast.error(`Error: ${response.data.error + " " + response.data.message}`);
+          toast.error(`${response.data.message}`);
         } else {
-          toast.success(`Success: ${response.data.message}`);
+          // toast.success(`${response.data.message}`);
           setMeetings(response.data.data);
         }
       } catch (error) {
-        toast.error(`Error: ${error}`);
+        toast.error(`${error}`);
       } finally {
         setLoading(false);
       }
     };
     fetchMeetings();
-  }, [currentTime]);
+  }, [dateSelect]);
 
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
@@ -66,9 +49,10 @@ const Calendar = () => {
       <div className="flex items-center justify-between mx-4">
         <div className="w-[200px] my-4">
           <DateTimePicker
-            name={"dateStart"}
-            value={currentTime}
-            action={(e) => setCurrentTime(e.target.value)}
+            name={"dateSelect"}
+            value={dateSelect}
+            isValidated={false}
+            action={(e) => setDateSelect(e.target.value)}
           />
         </div>
         <div className="flex items-center justify-center rounded-full w-11 h-11 border-2">
@@ -77,7 +61,7 @@ const Calendar = () => {
       </div>
       <div className="bg-[#EAEAEA] h-full pt-5">
         {loading && (
-          <div className="flex justify-center items-center h-screen">
+          <div className="flex fixed top-0 left-0 w-screen justify-center items-center h-screen">
             <ClipLoader size={150} color={"blue"} loading={loading} />
           </div>
         )}
@@ -95,7 +79,7 @@ const Calendar = () => {
           </div>
         </div>
       </div>
-      {modalIsOpen && <MeetingFormModal setLoading={setLoading} setMeetings={setMeetings} handleCloseModal={closeModal} />}
+      {modalIsOpen && <MeetingFormModal dateSelect={dateSelect} setMeetings={setMeetings} handleCloseModal={closeModal} setDateSelect={setDateSelect} />}
     </div>
   );
 };

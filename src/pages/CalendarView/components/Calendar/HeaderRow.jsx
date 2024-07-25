@@ -1,7 +1,7 @@
 import React from "react";
 
 const HeaderRow = () => {
-  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  const days = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6"];
 
   return (
     <div className="h-[60px] w-full bg-header-color pl-[120px] border-b-[1px]">
