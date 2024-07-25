@@ -51,6 +51,15 @@ const Form = ({
 
       let currentTime = dayStart;
 
+      // Nếu ngày được chọn là ngày hiện tại
+      if (moment(addForm.dateStart).isSame(moment(), 'day')) {
+        // Bắt đầu từ thời điểm hiện tại
+        currentTime = moment().startOf('hour');
+        if (currentTime.isBefore(dayStart)) {
+          currentTime = dayStart;
+        }
+      }
+
       while (currentTime < dayEnd) {
         const isAvailable = availableMeetingTimes.some(slot => {
           const slotStart = moment(slot.start);
@@ -140,7 +149,7 @@ const Form = ({
         value={addForm.timeStart}
         action={handleChangeFormField}
         options={timeStartOptions}
-        disabled={!addForm.dateStart || isWeekend(addForm.dateStart) || !availableMeetingTimes.length}
+        disabled={!addForm.dateStart || isWeekend(addForm.dateStart) || !availableMeetingTimes.length || !timeStartOptions.length}
       />
       <SelectField
         label="Thời lượng họp"
@@ -148,7 +157,7 @@ const Form = ({
         value={addForm.duration}
         action={handleChangeFormField}
         options={durationOptions}
-        disabled={!addForm.timeStart}
+        disabled={ isWeekend(addForm.dateStart) || !timeStartOptions.length || !addForm.timeStart}
       />
       <Dropdown
         type="multi"
