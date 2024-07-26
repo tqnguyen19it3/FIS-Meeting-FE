@@ -3,9 +3,13 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3030/api/v1",
-  // Thêm các cấu hình mặc định khác nếu cần
+  baseURL: ' https://8ab4-118-69-133-197.ngrok-free.app',
+  headers: {
+    "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "69420",
+  },
 });
+
 
 axiosInstance.interceptors.response.use(
   response => response,

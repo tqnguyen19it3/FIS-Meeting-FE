@@ -10,7 +10,7 @@ const Sidebar = () => {
         <div className="w-[54px] h-[54px]  bg-[#414042] flex items-center justify-center rounded-[12px] m-1">
           <div className="w-[44px] h-[44px] bg-[#505050] flex items-center justify-center rounded-[12px]">
             <a href="/">
-              <img src={CalendarIcon} width={24} height={24} />
+              <img src={CalendarIcon} width={24} height={24} alt='Calendar Icon'/>
             </a>
           </div>
         </div>

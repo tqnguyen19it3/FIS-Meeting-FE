@@ -1,8 +1,8 @@
 import "./App.css";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import Calendar from "./pages/CalendarView/components/Calendar/Calendar";
-import Sidebar from "./pages/CalendarView/components/SideBar/SideBar";
+import Calendar from "./pages/CalendarView/components/Calendar";
+import Sidebar from "./pages/CalendarView/components/SideBar";
 
 function App() {
   return (

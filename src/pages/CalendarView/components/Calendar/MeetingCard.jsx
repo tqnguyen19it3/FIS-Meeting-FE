@@ -1,50 +1,9 @@
 import React from "react";
 import moment from "moment-timezone";
+import { getColorClasses, translateMeetingStatus } from "../../../../utils";
 
 const MeetingCard = ({ meetings }) => {
   const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
-  const getColorClasses = (status) => {
-    switch (status) {
-      case "scheduled":
-        return {
-          lBgClass: "bg-meeting-scheduled",
-          rBgClass: "bg-meeting-scheduledBg",
-          textClass: "text-meeting-scheduled",
-        };
-      case "ongoing":
-        return {
-          lBgClass: "bg-meeting-ongoing",
-          rBgClass: "bg-meeting-ongoingBg",
-          textClass: "text-meeting-ongoing",
-        };
-      case "completed":
-        return {
-          lBgClass: "bg-meeting-completed",
-          rBgClass: "bg-meeting-completedBg",
-          textClass: "text-meeting-completed",
-        };
-      case "cancelled":
-        return {
-          lBgClass: "bg-meeting-cancelled",
-          rBgClass: "bg-meeting-cancelledBg",
-          textClass: "text-meeting-cancelled",
-        };
-      default:
-        return { lBgClass: "bg-gray-500", textClass: "text-gray-700" };
-    }
-  };
-
-  function translateMeetingStatus(status) {
-    const statusMap = {
-      'scheduled': 'Đã lên lịch',
-      'ongoing': 'Đang diễn ra',
-      'completed': 'Đã hoàn thành',
-      'cancelled': 'Đã hủy'
-    };
-
-    return statusMap[status] || 'Trạng thái chưa xác định';
-}
 
   const renderMeetingsForDay = (day) => {
     const filteredMeetings = meetings.filter((meeting) => {
@@ -55,7 +14,7 @@ const MeetingCard = ({ meetings }) => {
     });
 
     const transformedMeetingData = filteredMeetings.map((item, index) => {
-      return index == 0
+      return index === 0
         ? {
             meetingName: item.meetingName,
             department: item.department,
@@ -101,7 +60,7 @@ const MeetingCard = ({ meetings }) => {
 
     return transformedMeetingData.map((meeting, index) => {
       const margin = meeting.mgStyle >= 0 ? meeting.mgStyle : 0.03;
-      const extraMargin = meeting.mgStyle >= 0 ? (index == 0 ? 20 : 60) : 0;
+      const extraMargin = meeting.mgStyle >= 0 ? (index === 0 ? 20 : 60) : 0;
       const height = meeting.mgStyle >= 0 ? meeting.heightStyle : meeting.heightStyle - 1;
       const extraHeight = meeting.mgStyle >= 0 ? -60 : 0;
       return (

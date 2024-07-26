@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import TextInput from "./TextInput";
-import TextareaInput from "./TextareaInput";
 import SelectField from "./SelectField";
 import DateTimePicker from "./DateTimePicker";
-import "./style.css";
+import "../../../Calendar/style.css";
 import Dropdown from "./Dropdown";
 import moment from "moment-timezone";
-import { isWeekend } from "../../utils";
+import { isWeekend } from "../../../../../../utils";
 
 const Form = ({
   meetingRooms,
@@ -166,9 +165,9 @@ const Form = ({
         dataSelected={addForm.participants}
         onSelect={(item) => {
           const newDataSelected = addForm.participants.some(
-            (find) => find.value == item.value
+            (find) => find.value === item.value
           )
-            ? addForm.participants.filter((fil) => fil.value != item.value)
+            ? addForm.participants.filter((fil) => fil.value !== item.value)
             : [...addForm.participants, item];
           setAddForm({...addForm, participants: newDataSelected})
         }}

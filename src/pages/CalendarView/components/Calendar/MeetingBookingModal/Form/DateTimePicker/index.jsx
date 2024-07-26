@@ -48,7 +48,7 @@ const DateTimePicker = ({ label, name, value, action, isValidated }) => {
                 : currentDate.format("DD-MM-YYYY")
               }
             </span>
-            <img src={CalendarIC} width={16} height={16} />
+            <img src={CalendarIC} width={16} height={16} alt="Calendar Icon"/>
           </div>
         }
       />

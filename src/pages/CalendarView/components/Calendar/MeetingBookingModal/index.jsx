@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from '../../../../../axiosConfig';
 import { toast } from "react-toastify";
 import moment from "moment-timezone";
 import HeaderModal from "./HeaderModal";
 import BottomControl from "./BottomControl";
-import Form from "./Form/Form";
+import Form from "./Form";
 import { ClipLoader } from "react-spinners";
-import { getStartAndEndOfWeek } from "../utils";
+import { getStartAndEndOfWeek } from "../../../../../utils";
 
 const MeetingFormModal = ({
   setMeetings,
@@ -30,14 +30,15 @@ const MeetingFormModal = ({
     room: "",
   });
 
+
   useEffect(() => {
     const fetchMeetingRooms = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3030/api/v1/meeting-room/get-meeting-room-list"
+        const response = await axiosInstance.get(
+          "/api/v1/meeting-room/get-meeting-room-list"
         );
         if (response.data.error) {
-          toast.error(`${response.data.message}`);
+          toast.error(`abasas${response.data.message}`);
         } else {
           setMeetingRooms(response.data.data);
         }
@@ -47,8 +48,8 @@ const MeetingFormModal = ({
     };
     const fetchParticipants = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3030/api/v1/user/get-user-list"
+        const response = await axiosInstance.get(
+          "/api/v1/user/get-user-list"
         );
         if (response.data.error) {
           toast.error(`${response.data.message}`);
@@ -59,19 +60,17 @@ const MeetingFormModal = ({
         toast.error("Hệ thống đã xảy ra lỗi, vui lòng thử lại sau");
       }
     };
+
     const fetchAvailableMeetingTimes = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3030/api/v1/meeting/get-available-meeting-times-during-day",
+        const response = await axiosInstance.get(
+          "/api/v1/meeting/get-available-meeting-times-during-day",
           {
             params: {
-              date:
-                moment(dateSelect).toDate() >= moment(new Date()).toDate()
-                  ? dateSelect
-                  : new Date(),
-            },
+              date: moment(dateSelect).isSameOrAfter(moment(new Date())) ? dateSelect : new Date(),
+            }
           }
-        );
+        );        
         setAddForm((prevForm) => ({
           ...prevForm,
           dateStart:
@@ -93,8 +92,8 @@ const MeetingFormModal = ({
     const { name, value } = e.target;
     if (name === "dateStart") {
       try {
-        const response = await axios.get(
-          "http://localhost:3030/api/v1/meeting/get-available-meeting-times-during-day",
+        const response = await axiosInstance.get(
+          "/api/v1/meeting/get-available-meeting-times-during-day",
           {
             params: { date: value },
           }
@@ -136,21 +135,21 @@ const MeetingFormModal = ({
     };
     try {
       // Gọi API để tạo meeting
-      const response = await axios.post(
-        "http://localhost:3030/api/v1/meeting/create-meeting-with-participants",
+      const response = await axiosInstance.post(
+        "/api/v1/meeting/create-meeting-with-participants",
         transformMeetingData
-      );
+      );      
 
       if (response.data.error) {
         toast.error(`${response.data.message}`);
       } else {
         toast.success(`${response.data.message}`);
-        const meetingListData = await axios.get(
-          "http://localhost:3030/api/v1/meeting/get-meeting-list-by-week",
+        const meetingListData = await axiosInstance.get(
+          "/api/v1/meeting/get-meeting-list-by-week",
           {
-            params: getStartAndEndOfWeek(response.data.data.startTime),
+            params: getStartAndEndOfWeek(response.data.data.startTime)
           }
-        );
+        );        
         setDateSelect(response.data.data.startTime);
         setMeetings(meetingListData.data.data);
         // Reset form sau khi thành công
@@ -169,7 +168,6 @@ const MeetingFormModal = ({
         handleCloseModal();
       }
     } catch (error) {
-      console.log("Lỗi tạo cuộc họp: ", error);
       toast.error("Lỗi tạo cuộc họp, vui lòng thử lại sau");
     } finally {
       setLoading(false);

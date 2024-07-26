@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from '../../../../axiosConfig';
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
 import HeaderRow from "./HeaderRow";
 import TimeCol from "./TimeCol";
 import MeetingCard from "./MeetingCard";
-import MeetingFormModal from "./MeetingBookingModal/MeetingFormModal";
+import MeetingFormModal from "./MeetingBookingModal";
 import Button from "../Button";
 import DateTimePicker from "./MeetingBookingModal/Form/DateTimePicker";
 import MenuIcon from "./menu_ic.svg";
-import "./MeetingBookingModal/Form/style.css";
-import { getStartAndEndOfWeek } from "./utils";
+import "../Calendar/style.css";
+import { getStartAndEndOfWeek } from "../../../../utils";
 
 const Calendar = () => {
   const [meetings, setMeetings] = useState([]);
@@ -22,10 +22,13 @@ const Calendar = () => {
     const fetchMeetings = async () => {
       const { startDate, endDate } = getStartAndEndOfWeek(dateSelect);
       try {
-        setLoading(true)
-        const response = await axios.get('http://localhost:3030/api/v1/meeting/get-meeting-list-by-week', {
-          params: { startDate, endDate }
-        });
+        setLoading(true);
+        const response = await axiosInstance.get(
+          `/api/v1/meeting/get-meeting-list-by-week`,
+          {
+            params: { startDate, endDate },
+          }
+        );
         if (response.data.error) {
           toast.error(`${response.data.message}`);
         } else {
@@ -56,7 +59,7 @@ const Calendar = () => {
           />
         </div>
         <div className="flex items-center justify-center rounded-full w-11 h-11 border-2">
-          <img src={MenuIcon} width={17} height={17} />
+          <img src={MenuIcon} width={17} height={17} alt="Menu Icon"/>
         </div>
       </div>
       <div className="bg-[#EAEAEA] h-full pt-5">
@@ -79,7 +82,14 @@ const Calendar = () => {
           </div>
         </div>
       </div>
-      {modalIsOpen && <MeetingFormModal dateSelect={dateSelect} setMeetings={setMeetings} handleCloseModal={closeModal} setDateSelect={setDateSelect} />}
+      {modalIsOpen && (
+        <MeetingFormModal
+          dateSelect={dateSelect}
+          setMeetings={setMeetings}
+          handleCloseModal={closeModal}
+          setDateSelect={setDateSelect}
+        />
+      )}
     </div>
   );
 };
