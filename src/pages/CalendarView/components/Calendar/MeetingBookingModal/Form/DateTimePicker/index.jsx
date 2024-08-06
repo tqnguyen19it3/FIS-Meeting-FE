@@ -21,7 +21,8 @@ const DateTimePicker = ({ label, name, value, action, isValidated }) => {
         action({ target: { name, value: date } });
       }else{
         toast.error(`Xác thực lỗi: Bạn không thể đặt ngày rơi vào một ngày trong quá khứ`);
-        setSelectDate("");
+        setSelectDate(new Date());
+        action({ target: { name, value: new Date() } });
       }
     } else {
       setSelectDate(date);
@@ -30,14 +31,14 @@ const DateTimePicker = ({ label, name, value, action, isValidated }) => {
   }
 
   return (
-    <div className="datePicker font-regular font-sans text-sm">
+    <div className="datePicker text-[#343434] font-regular font-sans text-sm">
       {label && (
         <span className="block mb-1 text-[#343434]">
           {label}
         </span>
       )}
       <DatePicker
-        className="w-full text-black"
+        className="w-full "
         selected={selectDate}
         onChange={handleValidateAndSetDate}
         customInput={

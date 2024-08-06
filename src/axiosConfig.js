@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const axiosInstance = axios.create({
-  baseURL: ' https://8ab4-118-69-133-197.ngrok-free.app',
+  baseURL: 'https://c422-118-69-133-197.ngrok-free.app',
   headers: {
     "Content-Type": "application/json",
     "ngrok-skip-browser-warning": "69420",

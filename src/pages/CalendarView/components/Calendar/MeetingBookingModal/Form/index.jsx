@@ -8,7 +8,6 @@ import moment from "moment-timezone";
 import { isWeekend } from "../../../../../../utils";
 
 const Form = ({
-  meetingRooms,
   participants,
   addForm,
   setAddForm,
@@ -18,14 +17,6 @@ const Form = ({
 
   const [timeStartOptions, setTimeStartOptions] = useState([]);
   const [durationOptions, setDurationOptions] = useState([]);
-
-  const transformedMeetingRoomData = meetingRooms?.map((item, index) => {
-    return {
-      value: item._id,
-      label: item.roomName,
-      status: item.status,
-    };
-  });
 
   const transformedParticipantData = participants?.map((user, index) => {
     return {
@@ -52,8 +43,8 @@ const Form = ({
 
       // Nếu ngày được chọn là ngày hiện tại
       if (moment(addForm.dateStart).isSame(moment(), 'day')) {
-        // Bắt đầu từ thời điểm hiện tại
-        currentTime = moment().startOf('hour');
+        // Bắt đầu từ thời điểm hiện tại trở đi tính theo giờ
+        currentTime = moment().add(1, 'hour').startOf('hour');
         if (currentTime.isBefore(dayStart)) {
           currentTime = dayStart;
         }
@@ -128,12 +119,20 @@ const Form = ({
         value={addForm.description}
         action={handleChangeFormField}
       />
-      <SelectField
-        label="Phòng họp"
-        name={"room"}
-        value={addForm.room}
-        action={handleChangeFormField}
-        options={transformedMeetingRoomData}
+            <Dropdown
+        type="multi"
+        title="Người tham dự"
+        placeholder="Chọn"
+        dataSelected={addForm.participants}
+        onSelect={(item) => {
+          const newDataSelected = addForm.participants.some(
+            (find) => find.value === item.value
+          )
+            ? addForm.participants.filter((fil) => fil.value !== item.value)
+            : [...addForm.participants, item];
+          setAddForm({...addForm, participants: newDataSelected})
+        }}
+        data = {DUMMY_PARTICIPANT_DATA}
       />
       <DateTimePicker
         label="Ngày họp"
@@ -157,21 +156,6 @@ const Form = ({
         action={handleChangeFormField}
         options={durationOptions}
         disabled={ isWeekend(addForm.dateStart) || !timeStartOptions.length || !addForm.timeStart}
-      />
-      <Dropdown
-        type="multi"
-        title="Người tham dự"
-        placeholder="Chọn"
-        dataSelected={addForm.participants}
-        onSelect={(item) => {
-          const newDataSelected = addForm.participants.some(
-            (find) => find.value === item.value
-          )
-            ? addForm.participants.filter((fil) => fil.value !== item.value)
-            : [...addForm.participants, item];
-          setAddForm({...addForm, participants: newDataSelected})
-        }}
-        data = {DUMMY_PARTICIPANT_DATA}
       />
     </div>
   );

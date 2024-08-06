@@ -13,8 +13,8 @@ const MeetingFormModal = ({
   handleCloseModal,
   setDateSelect,
   dateSelect,
+  roomId
 }) => {
-  const [meetingRooms, setMeetingRooms] = useState([]);
   const [participants, setParticipants] = useState([]);
   const [availableMeetingTimes, setAvailableMeetingTimes] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -27,25 +27,11 @@ const MeetingFormModal = ({
     duration: "",
     participants: [],
     status: "scheduled",
-    room: "",
+    room: roomId,
   });
 
 
   useEffect(() => {
-    const fetchMeetingRooms = async () => {
-      try {
-        const response = await axiosInstance.get(
-          "/api/v1/meeting-room/get-meeting-room-list"
-        );
-        if (response.data.error) {
-          toast.error(`abasas${response.data.message}`);
-        } else {
-          setMeetingRooms(response.data.data);
-        }
-      } catch (error) {
-        toast.error("Hệ thống đã xảy ra lỗi, vui lòng thử lại sau");
-      }
-    };
     const fetchParticipants = async () => {
       try {
         const response = await axiosInstance.get(
@@ -67,10 +53,11 @@ const MeetingFormModal = ({
           "/api/v1/meeting/get-available-meeting-times-during-day",
           {
             params: {
+              roomId: roomId,
               date: moment(dateSelect).isSameOrAfter(moment(new Date())) ? dateSelect : new Date(),
             }
           }
-        );        
+        );
         setAddForm((prevForm) => ({
           ...prevForm,
           dateStart:
@@ -83,7 +70,6 @@ const MeetingFormModal = ({
         toast.error("Hệ thống đã xảy ra lỗi, vui lòng thử lại sau");
       }
     };
-    fetchMeetingRooms();
     fetchParticipants();
     fetchAvailableMeetingTimes();
   }, [dateSelect]);
@@ -95,7 +81,7 @@ const MeetingFormModal = ({
         const response = await axiosInstance.get(
           "/api/v1/meeting/get-available-meeting-times-during-day",
           {
-            params: { date: value },
+            params: { roomId, date: value },
           }
         );
         setAvailableMeetingTimes(response.data.data);
@@ -144,10 +130,11 @@ const MeetingFormModal = ({
         toast.error(`${response.data.message}`);
       } else {
         toast.success(`${response.data.message}`);
+        const datePick = getStartAndEndOfWeek(response.data.data.startTime)
         const meetingListData = await axiosInstance.get(
-          "/api/v1/meeting/get-meeting-list-by-week",
+          "/api/v1/meeting/get-meeting-list-by-week-and-room",
           {
-            params: getStartAndEndOfWeek(response.data.data.startTime)
+            params: {roomId, datePick}
           }
         );        
         setDateSelect(response.data.data.startTime);
@@ -162,7 +149,7 @@ const MeetingFormModal = ({
           duration: "",
           participants: [],
           status: "scheduled",
-          room: "",
+          room: roomId,
         });
         // close form modal
         handleCloseModal();
@@ -186,7 +173,6 @@ const MeetingFormModal = ({
         <Form
           addForm={addForm}
           setAddForm={setAddForm}
-          meetingRooms={meetingRooms}
           participants={participants}
           handleChangeFormField={handleChangeFormField}
           availableMeetingTimes={availableMeetingTimes}
