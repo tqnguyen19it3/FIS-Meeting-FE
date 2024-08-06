@@ -13,7 +13,7 @@ const DropdownItem = ({
   }
 
   return (
-    <If condition={type == 'single'}>
+    <If condition={type === 'single'}>
       <Then>
         <div
           style={{ backgroundColor: isSelected ? '#F7C245' : '' }}

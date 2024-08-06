@@ -16,7 +16,7 @@ const Dropdown = ({
 }) => {
   const [expanded, setExpanded] = useState(false)
   const [selectedItem, setSelectedItem] = useState(
-    defaultOption != undefined ? defaultOption : null,
+    defaultOption !== undefined ? defaultOption : null,
   )
   const dropdownRef = useRef(null)
 
@@ -43,7 +43,7 @@ const Dropdown = ({
 
   const handleSelectItem = (item) => {
     setSelectedItem(item)
-    if (type == 'single') setExpanded(false)
+    if (type === 'single') setExpanded(false)
     if (onSelect) onSelect(item)
   }
   return (
@@ -58,10 +58,10 @@ const Dropdown = ({
         onClick={handleExpandDropdown}
         className="border py-2 px-3 flex items-center justify-between rounded-[10px]">
         <div className="flex-1 flex items-center overflow-hidden">
-          <If condition={type == 'single'}>
+          <If condition={type === 'single'}>
             <Then>
               <span>
-                {selectedItem == null ? placeholder : selectedItem.label}
+                {selectedItem === null ? placeholder : selectedItem.label}
               </span>
             </Then>
             <Else>
@@ -89,7 +89,7 @@ const Dropdown = ({
               option={item}
               onSelectItem={item => handleSelectItem(item)}
               isSelected={
-                type == 'single'
+                type === 'single'
                   ? selectedItem?.value === item.value
                   : dataSelected?.some(data => data.value === item.value) ||
                     false

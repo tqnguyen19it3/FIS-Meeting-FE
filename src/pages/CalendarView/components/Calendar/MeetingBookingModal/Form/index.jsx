@@ -38,24 +38,30 @@ const Form = ({
       const options = [];
       const dayStart = moment(addForm.dateStart).startOf('day').add(9, 'hours'); // 9:00
       const dayEnd = moment(addForm.dateStart).startOf('day').add(18, 'hours'); // 18:00
+      const now = moment();
+      const isToday = moment(addForm.dateStart).isSame(now, 'day');
 
       let currentTime = dayStart;
 
       // Nếu ngày được chọn là ngày hiện tại
-      if (moment(addForm.dateStart).isSame(moment(), 'day')) {
+      if (isToday) {
         // Bắt đầu từ thời điểm hiện tại trở đi tính theo giờ
-        currentTime = moment().add(1, 'hour').startOf('hour');
+        currentTime = now.add(1, 'hour').startOf('hour');
         if (currentTime.isBefore(dayStart)) {
           currentTime = dayStart;
         }
       }
 
+      // Chuyển đổi availableMeetingTimes thành các đối tượng moment
+      const availableSlots = availableMeetingTimes.map(slot => ({
+        start: moment(slot.start),
+        end: moment(slot.end)
+      }));
+
       while (currentTime < dayEnd) {
-        const isAvailable = availableMeetingTimes.some(slot => {
-          const slotStart = moment(slot.start);
-          const slotEnd = moment(slot.end);
-          return currentTime.isBetween(slotStart, slotEnd, null, '[)');
-        });
+        const isAvailable = availableSlots.some(slot => 
+          currentTime.isBetween(slot.start, slot.end, null, '[)')
+        );
 
         if (isAvailable) {
           options.push({
