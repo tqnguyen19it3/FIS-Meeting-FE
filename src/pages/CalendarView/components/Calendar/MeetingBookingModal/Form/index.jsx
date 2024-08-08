@@ -125,7 +125,7 @@ const Form = ({
         value={addForm.description}
         action={handleChangeFormField}
       />
-            <Dropdown
+      <Dropdown
         type="multi"
         title="Người tham dự"
         placeholder="Chọn"

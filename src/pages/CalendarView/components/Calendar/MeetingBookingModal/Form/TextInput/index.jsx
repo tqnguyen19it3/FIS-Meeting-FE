@@ -14,6 +14,7 @@ const TextInput = ({label, type, name, value, action}) => {
           placeholder="Nhập"
           value={value}
           onChange={action}
+          autoComplete="off"
           required
         />
       </div>

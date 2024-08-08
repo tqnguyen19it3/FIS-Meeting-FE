@@ -30,7 +30,6 @@ const MeetingFormModal = ({
     room: roomId,
   });
 
-
   useEffect(() => {
     const fetchParticipants = async () => {
       try {

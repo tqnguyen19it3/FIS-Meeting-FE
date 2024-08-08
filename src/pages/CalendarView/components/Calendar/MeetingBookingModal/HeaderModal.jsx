@@ -1,7 +1,6 @@
 import React from "react";
 
 const HeaderModal = () => {
-
   return (
     <div className="p-5 text-start">
         <span className="font-bold text-2xl">Đặt phòng họp</span>
@@ -9,4 +8,4 @@ const HeaderModal = () => {
   );
 };
 
-export default HeaderModal;
+export default React.memo(HeaderModal);

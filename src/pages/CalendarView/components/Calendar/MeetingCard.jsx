@@ -17,6 +17,7 @@ const MeetingCard = ({ meetings }) => {
       return index === 0
         ? {
             meetingName: item.meetingName,
+            // roomName: item.roomId.roomName,
             department: item.department,
             startTime: item.startTime,
             date: `${moment(item.startTime).tz("Asia/Ho_Chi_Minh").format('DD/MM/YYYY')}`,
@@ -36,6 +37,7 @@ const MeetingCard = ({ meetings }) => {
           }
         : {
             meetingName: item.meetingName,
+            // roomName: item.roomId.roomName,
             department: item.department,
             date: `${moment(item.startTime).tz("Asia/Ho_Chi_Minh").format('DD/MM/YYYY')}`,
             time: `${moment(item.startTime)
@@ -81,7 +83,8 @@ const MeetingCard = ({ meetings }) => {
             } w-full text-start p-3 overflow-y-auto font-sans text-sm card`}
           >
             <div className={"font-semibold text-base"}>{meeting.meetingName}</div>
-            <div>{meeting.department}</div>
+            {/* <div>{meeting.roomName}</div> */}
+            <div>Phòng ban: {meeting.department}</div>
             <div>{meeting.time}</div>
             <div>{meeting.date}</div>
             <div className={`font-medium ${
@@ -107,4 +110,4 @@ const MeetingCard = ({ meetings }) => {
   );
 };
 
-export default MeetingCard;
+export default React.memo(MeetingCard);

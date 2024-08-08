@@ -65,7 +65,6 @@ const Calendar = () => {
         setLoading(false);
       }
     };
-
     fetchMeetings();
     
   }, [dateSelect, roomId]);
